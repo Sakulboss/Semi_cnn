@@ -1,0 +1,34 @@
+{
+  "project_dir_name": "Semi10",
+  "logger_settings": {
+    "log_level": 0,
+    "log_to_console": true,
+    "log_to_file": false,
+    "log_file": "Semi_10.log",
+    "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  },
+  "training_data": {
+    "training_files_storage_location": "D:\\Daten_Semi10\\26-27_April",
+    "sorted_files_storage_location": "D:\\Daten_Semi10",
+    "mel_specs_storage_location": "D:\\Daten_Semi10",
+    "training_file_extensions": "flac",
+    "size": "bees_1",
+    "segment_length_frames": "100",
+    "test_size": 0.2,
+    "create_new": false,
+    "create_new_source": true
+  },
+  "model_settings": {
+    "model_structure_file": "C:\\Users\\sdose\\Documents\\GitHub\\Semi10\\CNN_clean\\Neural_Network",
+    "batch_size": 60,
+    "learning_rate": 0.01,
+    "max_epochs": 100,
+    "test_size": 0.2,
+    "swarm_event_ratio": 0.5,
+    "min_epoch": 5,
+    "use_server": false,
+    "train_once": false,
+    "model_text": "l; conv2d; (1, 16); (3, 3); 1; (1, 1);; p; avgpool; (3, 3); 1; (1, 1);; l; conv2d; (16, 48); (3, 3); 1; (1, 1);; p; avgpool; (3, 3); 1; (1, 1);; l; conv2d; (48, 48); (3, 3); 1; (1, 1);; p; maxpool; (3, 3); 1; (1, 1);; v: view;; l; linear; (307200, 10);; l; linear; (10, 10);; l; linear; (10, 2);",
+    "dropbox": ""
+  }
+}
