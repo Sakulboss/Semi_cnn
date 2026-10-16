@@ -8,25 +8,14 @@ import librosa
 from tqdm import tqdm
 import matplotlib.pyplot as pl
 
+logger = logging.getLogger("CNN_Training.MELS.cepstrogram")
 
-def setup_logging(args: dict) -> logging.Logger:
-    handlers = []
-    if args.get('log_to_file', False):   logging.FileHandler(args.get('log_file', 'training.log'))
-    if args.get('log_to_console', True): handlers.append(logging.StreamHandler())
 
-    logging.basicConfig(
-        level=args.get('level', 2),
-        format=args.get('format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
-        handlers=handlers
-    )
-    return logging.getLogger(__name__)
-
-def mel_cepstrogram_from_file(fn_wav_name, logging_args, n_fft=1024, hop_length=441, fss = 48000, n_mels=64, stereo:bool=True) :
+def mel_cepstrogram_from_file(fn_wav_name, n_fft=1024, hop_length=441, fss = 48000, n_mels=64, stereo:bool=True) :
     """
-    Compute mel cepstrogram from audio file with librosa.feature.melspectogram()
+    Compute mel cepstrogram from audio file with librosa.feature.melspectrogram()
     Args:
         fn_wav_name:  str   Audio file name
-        logging_args: dict  with arguments for logging
         n_fft:        int   FFT size
         hop_length:   int   Hop size in samples
         fss:          float Sample rate in Hz
@@ -35,7 +24,6 @@ def mel_cepstrogram_from_file(fn_wav_name, logging_args, n_fft=1024, hop_length=
     Returns:
         np.ndarray: Mel cepstrogram
     """
-    logger = setup_logging(logging_args)
 
     try:
         x_new, fss = librosa.load(fn_wav_name, sr=fss, mono=not stereo)
@@ -68,13 +56,12 @@ def mel_cepstrogram_from_file(fn_wav_name, logging_args, n_fft=1024, hop_length=
     return x_new
 
 
-def mel_specs(labels: tuple, setting, logging_args) -> tuple:
+def mel_specs(labels: tuple, setting) -> tuple:
     """
     Create mel cepstrogram from audio files and splits them into segments to generate more training data.
     Args:
         labels:       tuple of data from previous step
         setting:      dict  with main settings like the type of dataset and injection of other labeled data.
-        logging_args: dict  with arguments for logging
     Returns:
         segment_file_mod_id: list of file ids of the segments
         segment_list:        list of mel cepstrogram segments
@@ -82,7 +69,6 @@ def mel_specs(labels: tuple, setting, logging_args) -> tuple:
         data[2]:             list of class names
         data[5]:             int  of classes
     """
-    logger = setup_logging(logging_args)
 
     # Initialize variables
     data = labels
@@ -100,7 +86,7 @@ def mel_specs(labels: tuple, setting, logging_args) -> tuple:
 
     # Create mel cepstrogram
     for count in tqdm(range(len(fn_wav_list)), desc='Mel-Cepstrogram'):
-        mel_spec = mel_cepstrogram_from_file(fn_wav_list[count], logging_args, stereo=(size == 'bees_1'))
+        mel_spec = mel_cepstrogram_from_file(fn_wav_list[count], stereo=(size == 'bees_1'))
         if mel_spec is None or count != 0 and mel_spec.shape != all_mel_specs[-1].shape:
             error_files.append(fn_wav_list[count])
         else:

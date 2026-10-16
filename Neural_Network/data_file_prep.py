@@ -4,19 +4,7 @@
 import os, logging, shutil, glob
 from tqdm import tqdm
 
-
-def setup_logging(args: dict) -> logging.Logger:
-    handlers = []
-    if args.get('log_to_file', False):   logging.FileHandler(args.get('log_file', 'training.log'))
-    if args.get('log_to_console', True): handlers.append(logging.StreamHandler())
-
-    logging.basicConfig(
-        level=args.get('level', 2),
-        format=args.get('format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
-        handlers=handlers
-    )
-    return logging.getLogger(__name__)
-
+logger = logging.getLogger("CNN_Training.MELS.file_prep")
 
 def create_bee_1(args: dict = None) -> str:
     """
@@ -55,7 +43,7 @@ def create_bee_1(args: dict = None) -> str:
     return target_base_folder
 
 
-def dataset(size: str, args: dict, logging_args: dict) -> list[str]:
+def dataset(size: str, args: dict) -> list[str]:
     """
     This function defines the used dataset. Therefor the working directory is changed to the correct one. It then creates the sorted dataset if it doesn't exist yet. The dataset is then returned as a list of paths.
     Args:
@@ -65,7 +53,7 @@ def dataset(size: str, args: dict, logging_args: dict) -> list[str]:
     Returns:
         list of paths to the dataset
     """
-    logger = setup_logging(logging_args)
+
     new_folder = args.get("create_new_source", True)
 
     if size == 'bees_1':

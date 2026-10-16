@@ -6,6 +6,7 @@ import torch.nn.functional as f
 from torch import nn
 import torch
 
+logger = logging.getLogger("CNN_Training.CNN.net_prep")
 
 # Hints for the layers:
 # stride:     how the filter moves
@@ -45,25 +46,11 @@ def get_uuid(uuid_file:str = 'device_uuid.txt') -> str:
         return device_uuid
 
 
-def setup_logging(args: dict) -> logging.Logger:
-    handlers = []
-    if args.get('log_to_file', False):   logging.FileHandler(args.get('log_file', 'training.log'))
-    if args.get('log_to_console', True): handlers.append(logging.StreamHandler())
-
-    logging.basicConfig(
-        level=args.get('level', 2),
-        format=args.get('format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
-        handlers=handlers
-    )
-    return logging.getLogger(__name__)
-
-
-def get_next_line(server_url, logger, uuid_file_path=None):
+def get_next_line(server_url, uuid_file_path=None):
     """
     This fuction sends a GET request to the server to retrieve the layer to be trained.
     Args:
         server_url:     str            The URL of the server to send the request to.
-        logger:         logging.Logger The logger for logging.
         uuid_file_path: str            The path to the uuid file to use - if not given, the uuid will be created new.
     Returns:
         The line and line index from the server response. The line index is used only on the server to change the status of the trained line.
@@ -156,11 +143,10 @@ def create_linear_layer(layer_description: str) -> nn.Linear:
     return nn.Linear(in_features=channels[0], out_features=channels[1])
 
 
-def getlayers(logger: logging.Logger, args:dict) -> tuple:
+def getlayers(args:dict) -> tuple:
     """
     This function prepares the layers of the neural network. It reads the model structure from a file or from a server and creates the layers based on the model text.
     Args:
-        logger: logging.Logger The logger for logging.
         args:   dict           The arguments for the neural network and server.
     Returns:
         list containing working layers, original model text and line index
@@ -179,7 +165,7 @@ def getlayers(logger: logging.Logger, args:dict) -> tuple:
         original_model_text = omt
         line = -1
     elif use_server:
-        original_model_text, line = get_next_line(server_url, logger, uuid_file_path)
+        original_model_text, line = get_next_line(server_url, uuid_file_path)
     else:
         original_model_text = getnextmodel(path)
         line = -1
@@ -223,17 +209,15 @@ def getlayers(logger: logging.Logger, args:dict) -> tuple:
 
 
 class CNN(nn.Module):
-    def __init__(self, logging_args: dict, args:dict):
+    def __init__(self, args:dict):
         """
         Initializes the CNN model with the given logging arguments and settings.
         Parameters:
-            logging_args: dict The arguments for logging.
             args:         dict The settings for the neural network
         """
         # Initialize variables
         super(CNN, self).__init__()
-        logger = setup_logging(logging_args)
-        layers, text, line = getlayers(logger, args)
+        layers, text, line = getlayers(args)
         self.line = line
         working = True
 
@@ -249,7 +233,7 @@ class CNN(nn.Module):
         self.accuracy:list   = []
         self.se:list         = []
         self.epoch_time:list = []
-        self.scrore:int      = -1
+        self.score:int      = -1
         self.epoch_max:int   = 1
 
 
@@ -302,6 +286,7 @@ class CNN(nn.Module):
         if se is None:
             return self.mse
         self.se.append(se)
+        return None
 
     def epoch(self, epoch=None):
         """
@@ -310,6 +295,7 @@ class CNN(nn.Module):
         if epoch is None:
             return self.epoch_max
         self.epoch_max = epoch
+        return None
 
 
     def __str__(self):

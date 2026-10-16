@@ -6,18 +6,7 @@ import numpy as np
 import logging
 from torch.utils.data import DataLoader, Dataset
 
-
-def setup_logging(args: dict) -> logging.Logger:
-    handlers = []
-    if args.get('log_to_file', False):   logging.FileHandler(args.get('log_file', 'training.log'))
-    if args.get('log_to_console', True): handlers.append(logging.StreamHandler())
-
-    logging.basicConfig(
-        level=args.get('level', 2),
-        format=args.get('format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
-        handlers=handlers
-    )
-    return logging.getLogger(__name__)
+logger = logging.getLogger("CNN_Training.CNN.data_prep")
 
 
 class CustomDataset(Dataset):
@@ -42,7 +31,7 @@ class CustomDataset(Dataset):
         return self.features[idx], self.labels[idx]
 
 
-def data_prep(data, logging_args, args):
+def data_prep(data, args):
     """
     Prepares the data for training and testing by creating DataLoader objects.
     Args:
@@ -53,8 +42,6 @@ def data_prep(data, logging_args, args):
         train_loader (DataLoader): DataLoader for the training data
         test_loader (DataLoader): DataLoader for the testing data
     """
-
-    logger = setup_logging(logging_args)
 
     # Get Args
     test_size = args.get('test_size', 0.3)

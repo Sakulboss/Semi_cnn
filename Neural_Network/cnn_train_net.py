@@ -7,18 +7,7 @@ from tqdm import tqdm
 
 from cnn_net_prep import CNN, get_uuid
 
-
-def setup_logging(args: dict) -> logging.Logger:
-    handlers = []
-    if args.get('log_to_file', False):   logging.FileHandler(args.get('log_file', 'training.log'))
-    if args.get('log_to_console', True): handlers.append(logging.StreamHandler())
-
-    logging.basicConfig(
-        level=args.get('level', 2),
-        format=args.get('format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
-        handlers=handlers
-    )
-    return logging.getLogger(__name__)
+logger = logging.getLogger("CNN_Training.CNN.training")
 
 
 def move_working_directory(target='files') -> None:
@@ -46,12 +35,11 @@ def get_new_filename(file_extension: str, text:str = 'model_torch_') -> str:
     return f'{text}{count}.{file_extension}'
 
 
-def train(loader, logging_args: dict, args: dict) -> tuple[CNN, float, int] | tuple[None, None, None]:
+def train(loader, args: dict) -> tuple[CNN, float, int] | tuple[None, None, None]:
     """
     Trains the model using the given data loader and arguments.
     Args:
         loader:       DataLoader      for the training and testing data
-        logging_args: dict            arguments for logging
         args:         dict            dictionary containing training parameters such as epochs, learning rate, etc.
     Returns:
         the trained model and the accuracy of the trained model
@@ -64,11 +52,10 @@ def train(loader, logging_args: dict, args: dict) -> tuple[CNN, float, int] | tu
     learning_rate   = args.get('learning_rate', 0.01)
     min_epoch       = args.get('min_epoch', 5)
     device          = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    logger          = setup_logging(logging_args)
     acc_scores      = []
 
     # Create the model and check if the model is working -> when all models are tested, model.working is set False, it should then break the training.
-    model = CNN(logging_args, args)
+    model = CNN(args)
     if model.working is False:
         return None, None, None
 
@@ -135,19 +122,18 @@ def train(loader, logging_args: dict, args: dict) -> tuple[CNN, float, int] | tu
     return model, acc_scores[-1], reached_epoch
 
 
-def save_model_structure(model: CNN, acc: float, epoch: int, logging_args: dict, args: dict) -> None:
+def save_model_structure(model: CNN, acc: float, epoch: int, args: dict) -> None:
     """
     Saves the model structure to a file.
     Parameters:
         model:        CNN;   trained neural network model
         acc:          float; accuracy of the model
         epoch:        int;   max epoch number reached in training
-        logging_args: dict;  arguments for logging
         args:         dict;  settings for training and server settings
     Returns:
         None
     """
-    logger = setup_logging(logging_args)
+
     path = args.get('save_model_to', None)
     save_weight = args.get('save_weight', True)
 
@@ -160,7 +146,7 @@ def save_model_structure(model: CNN, acc: float, epoch: int, logging_args: dict,
     with open(path_to_file, 'a') as f:
         f.write(f'{100 * acc:.5f}% {str(model)}\n')
 
-    if args.get('use_server',  False): send_result(model.accuracy[-1], acc, epoch, args, logging_args)
+    if args.get('use_server',  False): send_result(model.accuracy[-1], acc, epoch, args)
 
     if save_weight:
         os.chdir(path)
@@ -169,7 +155,7 @@ def save_model_structure(model: CNN, acc: float, epoch: int, logging_args: dict,
         logger.debug(f"Model weights saved to {filename}")
 
 
-def send_result(model: CNN, acc: float, epoch: int, logging_args: dict, args: dict):
+def send_result(model: CNN, acc: float, epoch: int, args: dict):
     """
     This function sends the result of the training back to the server.
     Args:
@@ -177,12 +163,10 @@ def send_result(model: CNN, acc: float, epoch: int, logging_args: dict, args: di
         acc:          float accuracy of the model
         epoch:        int   highest epoch reached in training epoch
         args:         dict  arguments for training, also containing the ones for server interaction
-        logging_args: dict  arguments for logging
     Returns:
         None
     """
     # Initilize variables
-    logger = setup_logging(logging_args)
     device_uuid = get_uuid(args.get('device_uuid', 'uuid.txt'))
     server_url = args.get('server_url', 'https://survive.cermann.com/server.php')
     headers = {'Content-Type': 'application/json'}
@@ -206,14 +190,13 @@ def send_result(model: CNN, acc: float, epoch: int, logging_args: dict, args: di
         logger.critical('Error decoding JSON response from server')
 
 
-def check_accuracy(loader, model: CNN, device: torch.device, logger) -> float:
+def check_accuracy(loader, model: CNN, device: torch.device) -> float:
     """
     Checks the accuracy of the model on the given dataset loader.
     Parameters:
         loader: DataLoader   for the dataset to check accuracy on
         device: torch.device device to run the model on
         model:  CNN          trained model
-        logger: logger       logger for logging
     Returns:
         accuracy: float       accuracy of the model on the dataset
     """
