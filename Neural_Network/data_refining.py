@@ -14,8 +14,8 @@ def refine_data(data: tuple) -> tuple:
         x_all:            list with normalized samples and additional dimension
 
     """
-    segment_list = data[1]
-    segment_class_id = data[2]
+    segment_list = data[0]
+    segment_class_id = data[1]
 
     # Create an empty array, like segment_list
     x_all = np.zeros_like(segment_list)

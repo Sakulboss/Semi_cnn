@@ -14,9 +14,12 @@
     "training_file_extensions": "flac",
     "size": "bees_1",
     "segment_length_frames": "100",
-    "test_size": 0.2,
-    "create_new": false,
-    "create_new_source": false
+    "segments_per_spectrogram": 10,
+    "create_new": true,
+    "create_new_source": false,
+    "max_file_num" : 100
+
+
   },
   "model_settings": {
     "model_structure_file": "C:\\Users\\sdose\\Documents\\GitHub\\Semi10\\CNN_clean\\Neural_Network",

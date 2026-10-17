@@ -55,6 +55,7 @@ def main() -> None:
     logger = setup_logging(logging_args)
     logging.getLogger('numba.core.byteflow').setLevel(logging.WARNING)
     logging.getLogger('numba.core.interpreter').setLevel(logging.WARNING)
+    logging.getLogger('numba.core.ssa').setLevel(logging.WARNING)
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
     logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
 

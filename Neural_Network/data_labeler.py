@@ -5,7 +5,7 @@ import os, glob
 import numpy as np
 
 
-def labeler(data: list, extension: str) -> tuple[list, np.ndarray, list, int, np.ndarray, int]:
+def labeler(data: list, settings: dict) -> tuple[list, np.ndarray, list, int, np.ndarray, int]:
     """
     This function labels the data. It takes a list of paths to subdirectories and creates a list of the file names with their labels.
     Args:
@@ -19,7 +19,8 @@ def labeler(data: list, extension: str) -> tuple[list, np.ndarray, list, int, np
         file_num_in_class: list  of file numbers in class - used for human readability
         n_sub:             int   of subdirectories -> number of classes
     """
-
+    extension = settings.get('training_file_extensions', 'wav')
+    max_file_num = settings.get('max_file_num', 0)
     n_sub = len(data)
     fn_wav_list = []
     class_label = []
@@ -29,6 +30,9 @@ def labeler(data: list, extension: str) -> tuple[list, np.ndarray, list, int, np
         current_class_label = os.path.basename(data[i])
         current_fn_wav_list = sorted(glob.glob(os.path.join(data[i], f'*.{extension}')))
         for k, fn_wav in enumerate(current_fn_wav_list):
+            # Breakout for smaller datasets, if max_file_num is set to a value > 0
+            if 0 < max_file_num <= k:
+                break
             fn_wav_list.append(fn_wav)
             class_label.append(current_class_label)
             file_num_in_class.append(k)

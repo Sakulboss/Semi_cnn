@@ -63,11 +63,10 @@ def mel_specs(data: tuple, setting) -> tuple:
         data:       tuple of data from previous step
         setting:      dict  with main settings like the type of dataset and injection of other labeled data.
     Returns:
-        segment_file_mod_id: list of file ids of the segments
         segment_list:        list of mel cepstrogram segments
         segment_class_id:    list of class ids of the segments
         data[2]:             list of class names
-        data[5]:             int  of classes
+        data[5]:             int number of classes
     """
 
     # Initialize variables
@@ -79,7 +78,6 @@ def mel_specs(data: tuple, setting) -> tuple:
 
     all_mel_specs = []
     segment_list = []
-    segment_file_id = []
     segment_class_id = []
     error_files = []
 
@@ -109,13 +107,10 @@ def mel_specs(data: tuple, setting) -> tuple:
             else:
                 segment_start_frames = int(np.random.rand(1).item() * max_segment_start_offset)
                 segment_list.append(all_mel_specs[i, :, segment_start_frames:segment_start_frames + segment_length_frames])
-            segment_file_id.append(i)
             segment_class_id.append(class_id[i])
 
     # conversion from the list of cepstrogram segments into a np.array for faster processing
     segment_list = np.array(segment_list)
-    segment_file_id = np.array(segment_file_id)
-    segment_file_mod_id = np.mod(segment_file_id, 5)
     segment_class_id = np.array(segment_class_id)
 
     pl.figure(figsize=(10, 8))
@@ -125,6 +120,6 @@ def mel_specs(data: tuple, setting) -> tuple:
     pl.tight_layout()
     pl.show()
 
-    return segment_file_mod_id, segment_list, segment_class_id, data[2], data[5]
+    return segment_list, segment_class_id, data[2], data[5]
 
 

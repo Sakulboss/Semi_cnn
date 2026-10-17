@@ -37,7 +37,7 @@ def trainingdata(settings: dict) -> tuple:
     dir_list = dataset(settings.get('size', 'bienen_1'), settings)
 
     logger.info(f'Labeling each file...')
-    labels = labeler(dir_list, settings.get('training_file_extensions', 'wav'))
+    labels = labeler(dir_list, settings)
 
     logger.info(f'Creating Mel-spectrograms...')
     mels = mel_specs(labels, settings)
