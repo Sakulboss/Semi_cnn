@@ -19,7 +19,7 @@ def setup_logging(args: dict) -> logging.Logger:
         format=args.get('format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
         handlers=handlers
     )
-    return logging.getLogger(__name__)
+    return logging.getLogger("CNN_Training")
 
 
 def load_args(path:str =None) -> dict:
@@ -53,27 +53,28 @@ def main() -> None:
 
     # Set up logging
     logger = setup_logging(logging_args)
+    logging.getLogger('numba.core.byteflow').setLevel(logging.WARNING)
+    logging.getLogger('numba.core.interpreter').setLevel(logging.WARNING)
+    logging.getLogger("matplotlib").setLevel(logging.WARNING)
+    logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
 
     # After this, the logger is available in every module, which is why all files are loaded after this point.
     from _driver_mels import trainingdata
     from cnn_data_prep import data_prep
     from cnn_train_net import train, save_model_structure, get_new_filename, move_working_directory
-
-    # These loggers are set to warning because in debug they produce too much output
-    logging.getLogger('numba.core.byteflow').setLevel(logging.WARNING)
-    logging.getLogger('numba.core.interpreter').setLevel(logging.WARNING)
     logger.info("Setup of logger and loading of modules completed.")
+
     # Check for correct arguments
     logger.debug(f'data_args:    {data_args}')
     logger.debug(f'model_args:   {model_args}')
     logger.debug(f'logging_args: {logging_args}')
 
-    # CUDA is the programm to compute on NVIDEA GPUs, with workarounds also for AMD GPUs
+    # CUDA is the programm to compute on NVIDIA GPUs, with workarounds also for AMD GPUs
     logger.info(f"CUDA acceleration available: {torch.cuda.is_available()}")
     data = trainingdata(data_args)
     logger.info('Training will begin..')
 
-    # Check for continous training
+    # Check for continuous training
     if model_args.get('train_once', False):
         # Create and train the model
         loader = data_prep(data, model_args)

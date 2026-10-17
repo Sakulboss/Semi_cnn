@@ -49,7 +49,6 @@ def dataset(size: str, args: dict) -> list[str]:
     Args:
         size:         str  size of the dataset ('bees_1')
         args:         dict with main settings for the dataset like file storage locations, etc.
-        logging_args: dict with arguments for logging
     Returns:
         list of paths to the dataset
     """

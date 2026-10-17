@@ -101,7 +101,7 @@ def train(loader, args: dict) -> tuple[CNN, float, int] | tuple[None, None, None
         start = end
 
         # calculate the accuracy (Richtigkeit) of the model on the test data set, on which the model was not trained.
-        acc = check_accuracy(test_loader, model, device, logger)
+        acc = check_accuracy(test_loader, model, device)
 
         # Some models have the accuracy set to 0.5, which means probably too many neurons are dead, so that only one class is predicted every time, which means that 50% are correct of the test data because it is split equal into the events..
         if acc == 0.5:

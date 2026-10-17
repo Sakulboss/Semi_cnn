@@ -16,7 +16,7 @@
     "segment_length_frames": "100",
     "test_size": 0.2,
     "create_new": false,
-    "create_new_source": true
+    "create_new_source": false
   },
   "model_settings": {
     "model_structure_file": "C:\\Users\\sdose\\Documents\\GitHub\\Semi10\\CNN_clean\\Neural_Network",
@@ -27,7 +27,7 @@
     "swarm_event_ratio": 0.5,
     "min_epoch": 5,
     "use_server": false,
-    "train_once": false,
+    "train_once": true,
     "model_text": "l; conv2d; (1, 16); (3, 3); 1; (1, 1);; p; avgpool; (3, 3); 1; (1, 1);; l; conv2d; (16, 48); (3, 3); 1; (1, 1);; p; avgpool; (3, 3); 1; (1, 1);; l; conv2d; (48, 48); (3, 3); 1; (1, 1);; p; maxpool; (3, 3); 1; (1, 1);; v: view;; l; linear; (307200, 10);; l; linear; (10, 10);; l; linear; (10, 2);",
     "dropbox": ""
   }

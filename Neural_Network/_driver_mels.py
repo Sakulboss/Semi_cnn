@@ -35,15 +35,18 @@ def trainingdata(settings: dict) -> tuple:
     logger.info(f'Creating new dataset and saving it in {path}.')
     logger.info(f'Downloading and sorting the files...')
     dir_list = dataset(settings.get('size', 'bienen_1'), settings)
+
     logger.info(f'Labeling each file...')
     labels = labeler(dir_list, settings.get('training_file_extensions', 'wav'))
+
     logger.info(f'Creating Mel-spectrograms...')
     mels = mel_specs(labels, settings)
+
     logger.info(f'Splitting into test and training dataset and adding the right dimensions for the model...')
     trained_data = refine_data(mels)
-    logger.info(f'Saving training data...')
 
     # Save the training data
+    logger.info(f'Saving training data...')
     trained_data_array = np.empty(1, dtype=object)
     trained_data_array[0] = trained_data
 

@@ -56,11 +56,11 @@ def mel_cepstrogram_from_file(fn_wav_name, n_fft=1024, hop_length=441, fss = 480
     return x_new
 
 
-def mel_specs(labels: tuple, setting) -> tuple:
+def mel_specs(data: tuple, setting) -> tuple:
     """
     Create mel cepstrogram from audio files and splits them into segments to generate more training data.
     Args:
-        labels:       tuple of data from previous step
+        data:       tuple of data from previous step
         setting:      dict  with main settings like the type of dataset and injection of other labeled data.
     Returns:
         segment_file_mod_id: list of file ids of the segments
@@ -71,7 +71,6 @@ def mel_specs(labels: tuple, setting) -> tuple:
     """
 
     # Initialize variables
-    data = labels
     fn_wav_list = data[0]
     class_id = data[1]
     size = setting.get('size', 'bees_1')
