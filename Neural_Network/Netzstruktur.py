@@ -47,7 +47,7 @@ class NetStruct:
         """
         Create a convolutional layer with the given parameters.
         Args:
-            layer:   the created layers, to each will be all possibilities of this layer added
+            layer:   the created layers, to each will be all variations of this layer added
             channel: number of channels in the layer, defines the number of filters
             stride:  movement of the filter, here set to the standard (1)
 
@@ -65,7 +65,7 @@ class NetStruct:
         """
         Create a pooling layer with the given parameters.
         Args:
-            layer:  the created layers, to each will be all possibilities of this layer added
+            layer:  the created layers, to each will be all variations of this layer added
             stride: movement of the filter, here set to 1
 
         Returns:
@@ -83,7 +83,7 @@ class NetStruct:
         """
         Create the first linear layer if more than one is used with the given parameters. There are self.linear_dim exit neurons.
         Args:
-            layer:          the created layers, to each will be all possibilities of this layer added
+            layer:          the created layers, to each will be all variations of this layer added
             input_filters:  number of input filters to calculate the input size of the linear layer
         Returns:
             list: list with all possible layers
@@ -98,7 +98,7 @@ class NetStruct:
         """
         Create the middle linear layer if three linear layers are used with the given parameters. There are self.linear_dim entry and exit neurons.
         Args:
-            layer:          the created layers, to each will be all possibilities of this layer added
+            layer:          the created layers, to each will be all variations of this layer added
         Returns:
             list: list with all possible layers
         """
@@ -112,7 +112,7 @@ class NetStruct:
         """
         Create the last linear layer if more than one linear layer is used with the given parameters. There are self.linear_dim entry and self.output_dim exit neurons.
         Args:
-            layer:  the created layers, to each will be all possibilities of this layer added
+            layer:  the created layers, to each will be all variations of this layer added
         Returns:
             list: list with all possible layers
         """
@@ -126,7 +126,7 @@ class NetStruct:
         """
         Create a special linear layer if only one is used with the given parameters. There are self.output_dim exit neurons.
         Args:
-            layer:          the created layers, to each will be all possibilities of this layer added
+            layer:          the created layers, to each will be all variations of this layer added
             input_filters:  number of input filters to calculate the input size of the linear layer
         Returns:
             list: list with all possible layers
@@ -141,7 +141,7 @@ class NetStruct:
         """
         Create an activation layer with the given parameters.
         Args:
-            layer: the created layers, to each will be all possibilities of this layer added
+            layer: the created layers, to each will be all variations of this layer added
         Returns:
             list: list with all possible layers
         """
@@ -159,7 +159,7 @@ class NetStruct:
         """
         Create a view layer with the given parameters.
         Args:
-            layer: the created layers, to each will be the 'view'layer added
+            layer: the created layers, to each will be the 'view' layer added
         Returns:
             list: list with all possible layers
         """

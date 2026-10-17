@@ -7,8 +7,8 @@ import logging
 SERVER_URL = 'https://survive.cermann.com/server.php'
 UUID_FILE = 'device_uuid.txt'
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='myapp.log', level=logging.DEBUG)
+logger = logging.getLogger("CNN_Training.server")
+
 
 def load_or_create_uuid():
     """
@@ -27,12 +27,11 @@ def load_or_create_uuid():
         return device_uuid
 
 
-def get_next_line(device_uuid, logger):
+def get_next_line(device_uuid):
     """
     This function sends a GET request to the server to retrieve the layer to be trained.
     Args:
         device_uuid: The UUID of the device, used as a key for the request.
-        logger: The logger for logging.
     Returns:
         The line and line index from the server response.
     """
@@ -49,7 +48,7 @@ def get_next_line(device_uuid, logger):
             return None, None
         try:
             data = response.json()
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             logger.error(f"Ungültige JSON-Antwort vom Server: {response.text}")
             return None, None
         if 'line' in data and 'line_index' in data:
@@ -62,14 +61,13 @@ def get_next_line(device_uuid, logger):
         return None, None
 
 
-def send_result(device_uuid, line_index, result, logger):
+def send_result(device_uuid, line_index, result):
     """
     This function sends the result of the training back to the server.
     Args:
         device_uuid: The UUID of the device.
         line_index:  The index of the line that was trained.
         result:      The result of the training.
-        logger:      The logger for logging.
     Returns:
         None
     """
@@ -95,13 +93,13 @@ def send_result(device_uuid, line_index, result, logger):
         logger.critical(f'Error decoding JSON response from server: {str(e)}')
 
 
-def main(logger):
+def main():
     device_uuid = load_or_create_uuid()
     print(f'Device UUID: {device_uuid}')
 
-    line, line_index = get_next_line(device_uuid, logger)
+    line, line_index = get_next_line(device_uuid)
     if line is not None and line_index is not None:
-        send_result(device_uuid, line_index, line, logger)
+        send_result(device_uuid, line_index, line)
 
 if __name__ == '__main__':
-    main(logger)
+    main()

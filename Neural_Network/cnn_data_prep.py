@@ -36,7 +36,6 @@ def data_prep(data, args):
     Prepares the data for training and testing by creating DataLoader objects.
     Args:
         data:         tuple contains the training and testing data
-        logging_args: dict  with the arguments for logging
         args:         dict  contains the arguments for DataLoader
     Returns:
         train_loader (DataLoader): DataLoader for the training data

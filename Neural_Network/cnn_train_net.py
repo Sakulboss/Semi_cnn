@@ -103,7 +103,7 @@ def train(loader, args: dict) -> tuple[CNN, float, int] | tuple[None, None, None
         # calculate the accuracy (Richtigkeit) of the model on the test data set, on which the model was not trained.
         acc = check_accuracy(test_loader, model, device)
 
-        # Some models have the accuracy set to 0.5, which means probably too many neurons are dead, so that only one class is predicted every time, which means that 50% are correct of the test data because it is split equal into the events..
+        # Some models have the accuracy set to 0.5, which means probably too many neurons are dead, so that only one class is predicted every time, which means that 50% are correct of the test data because it is split equal into the events.
         if acc == 0.5:
             logger.warning(f'Bad accuracy of {acc:.2f} in first epoch, stopping training (bad model weights or too many dead neurons)')
             acc_scores.append(acc)
@@ -161,12 +161,12 @@ def send_result(model: CNN, acc: float, epoch: int, args: dict):
     Args:
         model:        CNN   trained model
         acc:          float accuracy of the model
-        epoch:        int   highest epoch reached in training epoch
+        epoch:        int   the highest epoch reached in training epoch
         args:         dict  arguments for training, also containing the ones for server interaction
     Returns:
         None
     """
-    # Initilize variables
+    # Initialize variables
     device_uuid = get_uuid(args.get('device_uuid', 'uuid.txt'))
     server_url = args.get('server_url', 'https://survive.cermann.com/server.php')
     headers = {'Content-Type': 'application/json'}

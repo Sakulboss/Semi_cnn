@@ -48,7 +48,7 @@ def get_uuid(uuid_file:str = 'device_uuid.txt') -> str:
 
 def get_next_line(server_url, uuid_file_path=None):
     """
-    This fuction sends a GET request to the server to retrieve the layer to be trained.
+    This function sends a GET request to the server to retrieve the layer to be trained.
     Args:
         server_url:     str            The URL of the server to send the request to.
         uuid_file_path: str            The path to the uuid file to use - if not given, the uuid will be created new.
@@ -196,10 +196,12 @@ def getlayers(args:dict) -> tuple:
             elif 'tanh' in layer:
                 functions.append(f.tanh)
             else:
-                print("Error: Activation function not found: --{}".format(layer))
+                print(f"Error: Activation function not found: --{layer}")
         elif layer.startswith('v'):
             reshape_tensor = lambda tensor: tensor.view(tensor.shape[0], -1)
             functions.append(reshape_tensor)
+            if 'extra' in layer:
+                functions.append(torch.cat)
         elif layer == '':
             pass
         else:
@@ -248,11 +250,12 @@ class CNN(nn.Module):
         self.layers = layers
 
 
-    def forward(self, x) -> torch.Tensor:
+    def forward(self, x, extra = None) -> torch.Tensor:
         """
         This function defines the forward pass of the CNN.
         Parameters:
             x: torch.Tensor input tensor
+            extra: torch.Tensor, additional, direct feed to linear layers
         Returns:
             The through the net passed tensor
         """
@@ -266,7 +269,13 @@ class CNN(nn.Module):
                 x = self.module_layers[layer_count](x)
                 layer_count += 1
             elif callable(layer):
-                x = self.functions[func_count](x)
+                # Option to include extra input data for linear layers, e.g. for additional features
+                if layer is torch.cat:
+                    if extra is None:
+                        extra = torch.empty(x.shape[0], 0, device=x.device)
+                    x = self.functions[func_count]([x, extra], dim=1)
+                else:
+                    x = self.functions[func_count](x)
                 func_count += 1
             else:
                 print(f"Error: Unknown layer type: {layer}")
