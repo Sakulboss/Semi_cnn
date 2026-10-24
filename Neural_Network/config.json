@@ -17,7 +17,7 @@
     "segments_per_spectrogram": 10,
     "create_new": true,
     "create_new_source": false,
-    "max_file_num" : 100
+    "max_file_num" : 0
 
 
   },

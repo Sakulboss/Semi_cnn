@@ -47,7 +47,8 @@ def mel_cepstrogram_from_file(fn_wav_name, n_fft=1024, hop_length=441, fss = 480
                                 fmax=fss / 2,
                                 power=1.0,
                                 htk=True,
-                                norm=None
+                                norm=None,
+                                pad_mode="reflect"
                               )
 
     # apply dB normalization

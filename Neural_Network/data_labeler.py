@@ -10,7 +10,7 @@ def labeler(data: list, settings: dict) -> tuple[list, np.ndarray, list, int, np
     This function labels the data. It takes a list of paths to subdirectories and creates a list of the file names with their labels.
     Args:
         data:      list of paths to subdirectories
-        extension: str  file extension of the files to be labeled
+        settings:  dict containing settings, see README.md for details
     Returns:
         fn_wav_list:       list  of file names
         class_id:          list  of class ids - easier for computation
