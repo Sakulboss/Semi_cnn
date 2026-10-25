@@ -148,6 +148,7 @@ def save_model_structure(model: CNN, acc: float, epoch: int, args: dict) -> None
 
     path = args.get('save_model_to', None)
     save_weight = args.get('save_weight', True)
+    save_onnx = args.get('save_onnx', False)
 
     if path is None:
         move_working_directory()
@@ -158,13 +159,22 @@ def save_model_structure(model: CNN, acc: float, epoch: int, args: dict) -> None
     with open(path_to_file, 'a') as f:
         f.write(f'{100 * acc:.5f}% {str(model)}\n')
 
-    if args.get('use_server',  False): send_result(model.accuracy[-1], acc, epoch, args)
+    if args.get('use_server',  False):
+        send_result(model.accuracy[-1], acc, epoch, args)
 
     if save_weight:
         os.chdir(path)
         filename = get_new_filename('ckpt')
         torch.save(model, filename)
         logger.debug(f"Model weights saved to {filename}")
+
+    if save_onnx:
+        os.chdir(path)
+        filename = get_new_filename('onnx')
+        dummy_input = torch.randn(1, 1, 64, 100)
+        torch.onnx.export(model, (dummy_input,), filename, opset_version=18, dynamo=False)
+        logger.debug(f"Model exported to ONNX format and saved to {filename}")
+
 
 
 def send_result(model: CNN, acc: float, epoch: int, args: dict):
