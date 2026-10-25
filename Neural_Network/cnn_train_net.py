@@ -51,6 +51,7 @@ def train(loader, args: dict) -> tuple[CNN, float, int] | tuple[None, None, None
     max_epochs      = args.get('max_epochs', 10)
     learning_rate   = args.get('learning_rate', 0.01)
     min_epoch       = args.get('min_epoch', 5)
+    destillation    = args.get('distillation', False)
     device          = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     acc_scores      = []
 
@@ -67,6 +68,11 @@ def train(loader, args: dict) -> tuple[CNN, float, int] | tuple[None, None, None
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     start = time.perf_counter()
 
+    if destillation:
+        base_model = torch.load(args.get('base_model_path', '../models/model_torch_1.pt'), map_location=device)
+        base_model.eval()
+        logger.info(f"Using distillation with base model: {base_model}")
+
     # Start training loop
     for epoch in range(max_epochs):
         logger.debug(f"Epoch [{epoch + 1}/{max_epochs}]")
@@ -79,10 +85,16 @@ def train(loader, args: dict) -> tuple[CNN, float, int] | tuple[None, None, None
 
             # Forward pass: compute the model output
             scores = model(data)
+            if destillation:
+                with torch.no_grad():
+                    base_scores = base_model(data)
 
             # This was used for debugging, but it's safe to keep for just in case.
             try:
-                loss = criterion(scores, targets)
+                if destillation:
+                    loss = criterion(scores, base_scores)
+                else:
+                    loss = criterion(scores, targets)
             except RuntimeError:
                 logger.critical(f'Shape of scores ({scores.shape}) or targets ({targets.shape}) are not equal -> Training cannot be completed')
                 logger.debug(f'Scores: {scores} \nTargets: {targets}')

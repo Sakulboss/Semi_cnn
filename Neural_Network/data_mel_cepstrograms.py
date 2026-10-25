@@ -26,7 +26,7 @@ def mel_cepstrogram_from_file(fn_wav_name, n_fft=1024, hop_length=441, fss = 480
     """
 
     try:
-        x_new, fss = librosa.load(fn_wav_name, sr=fss, mono=not stereo)
+        x_new, fss = librosa.load(fn_wav_name, sr=None, mono=not stereo)
     except Exception as e:
         logger.error(e)
         return None
