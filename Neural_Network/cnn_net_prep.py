@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import requests, os, logging, uuid
+from functools import partial
 import torch.nn.functional as f
 from torch import nn
 import torch
@@ -198,8 +199,8 @@ def getlayers(args:dict) -> tuple:
             else:
                 print(f"Error: Activation function not found: --{layer}")
         elif layer.startswith('v'):
-            reshape_tensor = lambda tensor: tensor.view(tensor.shape[0], -1)
-            functions.append(reshape_tensor)
+            # partial adds start_dim = 1 to flatten when called later
+            functions.append(partial(torch.flatten, start_dim=1))
             if 'extra' in layer:
                 functions.append(torch.cat)
         elif layer == '':
